@@ -35,12 +35,27 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     async def async_update_data():
         locks = {}
         for lock in await hass.async_add_executor_job(api.locks):
-            access_codes = {
-                ac.access_code_id: ac
-                for ac in await hass.async_add_executor_job(lock.access_codes)
-            }
-            logs = await hass.async_add_executor_job(lock.logs)
-            locks[lock.device_id] = LockData(lock, logs, access_codes)
+            try:
+                access_codes = await hass.async_add_executor_job(lock.access_codes)
+            except Exception as ex:  # pylint: disable=broad-exception-caught
+                # We don't technically need access codes, so simply log the error and continue.
+                # This will prevent the integration from failing for all locks.
+                # See: https://github.com/dknowles2/ha-schlage/issues/45
+                LOGGER.exception(
+                    "Failed to fetch access codes for lock %s: %s", lock.name, ex
+                )
+                access_codes = {}
+            try:
+                logs = await hass.async_add_executor_job(lock.logs)
+            except Exception as ex:  # pylint: disable=broad-exception-caught
+                # We also don't technically need logs, so simply log the error and continue.
+                # This will prevent the integration from failing for all locks.
+                # See: https://github.com/dknowles2/ha-schlage/issues/45
+                LOGGER.exception("Failed to fetch logs for lock %s: %s", lock.name, ex)
+                logs = []
+            locks[lock.device_id] = LockData(
+                lock, logs, {ac.access_code_id: ac for ac in access_codes}
+            )
         users = {u.user_id: u for u in await hass.async_add_executor_job(api.users)}
         return SchlageData(locks, users)
 

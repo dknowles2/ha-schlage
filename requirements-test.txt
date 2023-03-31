@@ -1,2 +1,2 @@
-pytest-homeassistant-custom-component==0.13.9
+pytest-homeassistant-custom-component==0.13.11
 pyschlage==2023.3.2

@@ -91,6 +91,7 @@ class TestChangedBy:
             lock_device = hass.states.get("lock.vault_door_lock")
             assert lock_device is not None
             assert lock_device.attributes.get("changed_by") == "thumbturn"
+        await hass.config_entries.async_unload(entry.entry_id)
 
     async def test_keypad_unlock(self, hass, bypass_auth_init, mock_lock):
         mock_lock.logs.return_value = [
@@ -119,6 +120,7 @@ class TestChangedBy:
             lock_device = hass.states.get("lock.vault_door_lock")
             assert lock_device is not None
             assert lock_device.attributes.get("changed_by") == "keypad - SECRET CODE"
+        await hass.config_entries.async_unload(entry.entry_id)
 
     async def test_mobile_device_unlock(
         self, hass, bypass_auth_init, mock_lock, mock_user
@@ -149,6 +151,7 @@ class TestChangedBy:
             lock_device = hass.states.get("lock.vault_door_lock")
             assert lock_device is not None
             assert lock_device.attributes.get("changed_by") == "mobile device - robot"
+        await hass.config_entries.async_unload(entry.entry_id)
 
 
 async def test_lock_services(hass, bypass_auth_init, mock_lock):
@@ -181,3 +184,4 @@ async def test_lock_services(hass, bypass_auth_init, mock_lock):
         )
         await hass.async_block_till_done()
         mock_lock.unlock.assert_called_once_with()
+    await hass.config_entries.async_unload(entry.entry_id)

@@ -67,6 +67,8 @@ class SchlageLock(CoordinatorEntity, LockEntity):
 
     def _update_attrs(self) -> None:
         self._attr_name = f"{self._lock.name} Lock"
+        # When is_locked is None the lock is unavailable.
+        self._attr_available = self._lock.is_locked is not None
         self._attr_is_locked = self._lock.is_locked
         self._attr_is_jammed = self._lock.is_jammed
         self._attr_device_info = DeviceInfo(

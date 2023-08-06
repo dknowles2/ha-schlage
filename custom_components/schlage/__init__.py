@@ -11,6 +11,7 @@ from pyschlage.user import User
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.helpers.issue_registry import IssueSeverity, async_create_issue
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import DOMAIN, LOGGER, PLATFORMS
@@ -25,6 +26,18 @@ async def async_setup(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Schlage from a config entry."""
+
+    async_create_issue(
+        hass,
+        DOMAIN,
+        "deprecated",
+        breaks_in_ha_version="2024.9.0",
+        is_fixable=False,
+        is_persistent=True,
+        severity=IssueSeverity.WARNING,
+        translation_key="deprecated",
+    )
+
     hass.data.setdefault(DOMAIN, {})
 
     auth = await hass.async_add_executor_job(

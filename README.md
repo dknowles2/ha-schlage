@@ -1,6 +1,15 @@
 # Schlage WiFi locks integration for Home Assistant
 A Home Assistant custom integration for Schlage Encode (and similar) WiFi locks.
 
+> [!WARNING]
+> This custom integration will be unsupported after Home Assistant release
+> 2023.9.0, which will include native support for Schlage Encode locks.
+>
+> The custom integration hosted here will be removed in October 2023,
+> which will cause issues for any installs via HACS. Please prepare to
+> replace any installs of this integration with the native Home Assistant
+> support.
+
 ## Installation
 
 You can install this component in two ways: via

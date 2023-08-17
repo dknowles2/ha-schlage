@@ -8,7 +8,12 @@ from pyschlage.lock import Lock
 from pyschlage.log import LockLog
 from pyschlage.user import User
 
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import (
+    CONF_PASSWORD,
+    CONF_USERNAME,
+    MAJOR_VERSION,
+    MINOR_VERSION,
+)
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.issue_registry import IssueSeverity, async_create_issue
@@ -27,16 +32,17 @@ async def async_setup(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Schlage from a config entry."""
 
-    async_create_issue(
-        hass,
-        DOMAIN,
-        "deprecated",
-        breaks_in_ha_version="2024.9.0",
-        is_fixable=False,
-        is_persistent=True,
-        severity=IssueSeverity.WARNING,
-        translation_key="deprecated",
-    )
+    if (MAJOR_VERSION == 2023 and MINOR_VERSION >= 9) or MAJOR_VERSION > 2023:
+        async_create_issue(
+            hass,
+            DOMAIN,
+            "deprecated",
+            breaks_in_ha_version="2024.9.0",
+            is_fixable=False,
+            is_persistent=True,
+            severity=IssueSeverity.WARNING,
+            translation_key="deprecated",
+        )
 
     hass.data.setdefault(DOMAIN, {})
 

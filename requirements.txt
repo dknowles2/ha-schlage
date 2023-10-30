@@ -1,3 +1,0 @@
-pip>=21.0,<23.3
-colorlog
-homeassistant
